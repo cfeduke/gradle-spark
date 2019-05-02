@@ -1,0 +1,86 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+def scalaBinaryVersion = scalaVersion.take(4)
+
+apply plugin: 'scala'
+apply plugin: 'java'
+apply plugin: 'idea'
+
+group 			'template.spark'
+version 		'1.0-SNAPSHOT'
+mainClassName = 'Main'
+
+configurations {
+    provided
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+    }
+}
+
+repositories {
+	jcenter()
+    mavenLocal()
+    mavenCentral()
+	// if you need to compile against the AWS Redshift JDBC driver you'll find it in this repo
+	//maven { url 'https://s3.amazonaws.com/redshift-maven-repository/release' }
+}
+
+dependencies {
+	compile "org.scala-lang:scala-library:${scalaVersion}"
+    compile "org.scala-lang:scala-reflect:${scalaVersion}"
+    compile "org.scala-lang:scala-compiler:${scalaVersion}"
+
+    compile "org.apache.spark:spark-sql_${scalaBinaryVersion}:${sparkVersion}"
+    compile "org.apache.spark:spark-streaming_${scalaBinaryVersion}:${sparkVersion}"
+    compile "org.apache.spark:spark-core_${scalaBinaryVersion}:${sparkVersion}"
+}
+
+jar {
+    classifier = 'all'
+    manifest {
+        attributes 'Implementation-Title': rootProject.name,
+                   'Implementation-Version': version
+    }
+    include { sourceSets.main.output.classesDir }
+    zip64 true
+}
+
+idea {
+    module {
+        scopes.PROVIDED.plus += [ configurations.provided ]
+    }
+}
+
+shadowJar {
+    classifier = 'shadow'
+    append 'reference.conf'
+    dependencies {
+        exclude(dependency('org.scala-lang::'))
+        exclude(dependency('org.apache.hadoop::'))
+        exclude(dependency('org.apache.parquet::'))
+        exclude(dependency('org.apache.avro::'))
+        exclude(dependency('org.apache.spark::'))
+		// when running in AWS EMR these dependencies are provided by the environment
+        //exclude(dependency('com.amazonaws.*::'))
+        //exclude(dependency('com.amazon.*::'))
+        //exclude(dependency('org.apache.commons.cli.*::'))
+    }
+    exclude 'scala/*'
+    zip64 true
+}
+
+task runSpark(type: JavaExec, dependsOn: classes) {
+    main = mainClassName
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+}
