@@ -1,17 +1,18 @@
 # Spark/Gradle/IntelliJ Project Template
 
-Spark version:		2.4.0
-Scala version: 		2.11.8
-Java runtime version: 	1.8
+May 2019:
+* Spark version:		2.4.0
+* Scala version: 		2.11.8
+* Java runtime version: 	1.8
 
-As of 05/2019 these are the same settings used in the Databricks cloud environment.
+These are the same settings used in the Databricks cloud environment.
 
 This template is based off of [an article by Faizan Ahemad](https://medium.com/@faizanahemad/apache-spark-setup-with-gradle-scala-and-intellij-2eeb9f30c02a) and
-has been updated accordingly.
+has had its dependencies updated appropriately.
 
 ## Getting Started (from scratch)
 
-For a completely new environment, install [SDKMAN!](https://sdkman.io/) and install Java 1.8.
+For a completely new environment, install [SDKMAN!](https://sdkman.io/) and then install Java 1.8 and Gradle.
 
 ```bash
 $ sdk install java 8.0.212-zulu # 05/2019 current 1.8 version
@@ -26,7 +27,12 @@ You could install a later JDK though YMMV as far as Spark goes on anything above
 
 Clone this repo into a suitable directory.
 
-Create your very own Gradle wrapper. (Its okay to check this into source control, I didn't here for convenience to support future users of this template.)
+```bash
+$ git clone git@github.com:cfeduke/gradle-spark.git my-new-spark-project
+```
+
+Create your very own Gradle wrapper. (Its okay to ultimate check the Gradle wrapper into source control, I didn't here for convenience to support future users of this template.)
+
 
 ```bash
 $ gradle wrapper
@@ -39,6 +45,7 @@ $ ./gradlew runSpark
 ```
 
 Expected _approximate_ output:
+
 ```
 Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
 19/05/02 10:25:53 INFO SparkContext: Running Spark version 2.4.0
